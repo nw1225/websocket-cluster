@@ -1,6 +1,6 @@
 package com.nw.im.router;
 
-public interface MessageRouterManage {
+public interface MessageBrokerManage {
     void send(String userId, String message);
 
 }

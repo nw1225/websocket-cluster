@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-public class RedisMessageRouterManage implements MessageRouterManage {
+public class RedisMessageBrokerManage implements MessageBrokerManage {
     private final RedisTemplate<String, ?> redisTemplate;
     private final TcpChannelManager tcpChannelManager;
 

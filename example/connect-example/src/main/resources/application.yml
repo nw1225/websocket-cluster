@@ -1,0 +1,21 @@
+
+spring:
+  data:
+    redis:
+      host: remote.host.com
+      port: 6379
+      password: nw123456
+      database: 0
+      lettuce:
+        pool:
+          max-idle: 16
+          max-active: 32
+          min-idle: 8
+  application:
+    name: connect
+websocket:
+#  cluster:
+#    port: 8189
+#server:
+#  port: 8081
+  authorization-token-name: token

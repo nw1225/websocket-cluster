@@ -4,8 +4,8 @@ import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.nw.im.common.ChannelManager;
 import com.nw.im.common.tcp.TcpNettyClient;
-import com.nw.im.router.MessageRouterManage;
-import com.nw.im.router.RedisMessageRouterManage;
+import com.nw.im.router.MessageBrokerManage;
+import com.nw.im.router.RedisMessageBrokerManage;
 import com.nw.im.router.tcp.NacosNodeSubscriber;
 import com.nw.im.router.tcp.TcpChannelManager;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class AutoConfig {
     }
 
     @Bean
-    public MessageRouterManage messageRouterManage(TcpChannelManager tcpChannelManager) {
-        return new RedisMessageRouterManage(redisTemplate,tcpChannelManager);
+    public MessageBrokerManage messageRouterManage(TcpChannelManager tcpChannelManager) {
+        return new RedisMessageBrokerManage(redisTemplate,tcpChannelManager);
     }
 }

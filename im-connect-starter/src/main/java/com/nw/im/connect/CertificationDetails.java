@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Builder
 @Data
-public class CertificationDetails<T> {
-    private T userId;
+public class CertificationDetails {
+    private Object userId;
     @Builder.Default
     private String device = "default";
 }

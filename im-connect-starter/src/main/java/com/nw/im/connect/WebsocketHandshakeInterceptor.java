@@ -17,7 +17,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class WebsocketHandshakeInterceptor implements HandshakeInterceptor {
     private final WebsocketProperties websocketProperties;
-    private final WebsocketAuthorization<?> websocketAuthorization;
+    private final WebsocketAuthorization websocketAuthorization;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
@@ -27,7 +27,7 @@ public class WebsocketHandshakeInterceptor implements HandshakeInterceptor {
         if (!StringUtils.hasLength(token)) {
             token = serverHttpRequest.getServletRequest().getHeader(authorizationTokenName);
         }
-        CertificationDetails<?> certificationDetails = websocketAuthorization.verify(token);
+        CertificationDetails certificationDetails = websocketAuthorization.verify(token);
         if (Objects.nonNull(certificationDetails)) {
             attributes.put(Constants.userId, certificationDetails.getUserId());
             attributes.put(Constants.device, certificationDetails.getDevice());
