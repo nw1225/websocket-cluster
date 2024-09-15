@@ -1,5 +1,6 @@
 package com.nw.im.connect;
 
+import com.nw.im.common.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
@@ -36,10 +37,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     private static String getUserId(WebSocketSession session) {
-        return session.getAttributes().get("userId").toString();
+        return session.getAttributes().get(Constants.userId).toString();
     }
 
     private static String getDevice(WebSocketSession session) {
-        return session.getAttributes().get("device").toString();
+        return session.getAttributes().get(Constants.device).toString();
     }
 }

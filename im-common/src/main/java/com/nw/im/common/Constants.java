@@ -10,4 +10,8 @@ public interface Constants {
 
     String clientKeyPrefix = "websocket:client:";
 
+    String userId = "userId";
+
+    String device = "device";
+
 }
