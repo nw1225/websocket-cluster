@@ -1,4 +1,4 @@
-package com.nw.im.router.tcp;
+package com.nw.im.broker.tcp;
 
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -9,7 +9,7 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.nw.im.common.Constants;
 import com.nw.im.common.tcp.TcpNettyClient;
-import com.nw.im.router.config.WebsocketProperties;
+import com.nw.im.broker.config.WebsocketProperties;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;

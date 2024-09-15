@@ -1,8 +1,8 @@
-package com.nw.im.router;
+package com.nw.im.broker;
 
 import com.nw.im.common.Constants;
 import com.nw.im.common.tcp.Message;
-import com.nw.im.router.tcp.TcpChannelManager;
+import com.nw.im.broker.tcp.TcpChannelManager;
 import io.netty.channel.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

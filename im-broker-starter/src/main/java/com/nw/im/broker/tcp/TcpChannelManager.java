@@ -1,4 +1,4 @@
-package com.nw.im.router.tcp;
+package com.nw.im.broker.tcp;
 
 import com.nw.im.common.ChannelManager;
 import io.netty.channel.Channel;

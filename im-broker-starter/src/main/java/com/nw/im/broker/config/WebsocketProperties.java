@@ -1,4 +1,4 @@
-package com.nw.im.router.config;
+package com.nw.im.broker.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,13 +1,13 @@
-package com.nw.im.router.config;
+package com.nw.im.broker.config;
 
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.naming.listener.EventListener;
+import com.nw.im.broker.RedisMessageBrokerManage;
+import com.nw.im.broker.tcp.NacosNodeSubscriber;
+import com.nw.im.broker.tcp.TcpChannelManager;
 import com.nw.im.common.ChannelManager;
 import com.nw.im.common.tcp.TcpNettyClient;
-import com.nw.im.router.MessageBrokerManage;
-import com.nw.im.router.RedisMessageBrokerManage;
-import com.nw.im.router.tcp.NacosNodeSubscriber;
-import com.nw.im.router.tcp.TcpChannelManager;
+import com.nw.im.broker.MessageBrokerManage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;

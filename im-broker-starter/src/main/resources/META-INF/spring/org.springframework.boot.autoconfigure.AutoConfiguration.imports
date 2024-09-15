@@ -1,2 +1,2 @@
-com.nw.im.router.config.WebsocketProperties
-com.nw.im.router.config.AutoConfig
+com.nw.im.broker.config.WebsocketProperties
+com.nw.im.broker.config.AutoConfig
