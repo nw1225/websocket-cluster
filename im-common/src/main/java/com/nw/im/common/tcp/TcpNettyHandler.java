@@ -14,6 +14,6 @@ public class TcpNettyHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
-        messageListener.message(msg.getUserIds(), msg.getMessage());
+        messageListener.message(msg.getUserId(), msg.getMessage());
     }
 }

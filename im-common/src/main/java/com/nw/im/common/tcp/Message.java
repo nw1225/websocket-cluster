@@ -10,6 +10,6 @@ import java.util.Set;
 @Data
 public class Message implements Serializable {
     private String message;
-    private Set<String> userIds;
+    private String userId;
 }
 

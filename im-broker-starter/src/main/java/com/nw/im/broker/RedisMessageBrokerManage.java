@@ -31,7 +31,7 @@ public class RedisMessageBrokerManage implements MessageBrokerManage {
             if (Objects.isNull(channel)) {
                 continue;
             }
-            channel.writeAndFlush(Message.builder().message(message).userIds(Collections.singleton(userId)).build());
+            channel.writeAndFlush(Message.builder().message(message).userId(userId).build());
         }
     }
 }

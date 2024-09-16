@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <artifactId>im-router-starter</artifactId>
+            <artifactId>im-broker-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <groupId>com.nw</groupId>
         </dependency>

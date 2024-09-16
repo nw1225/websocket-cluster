@@ -1,6 +1,6 @@
 package com.nw.example;
 
-import com.nw.im.router.MessageRouterManage;
+import com.nw.im.broker.MessageBrokerManage;
 import jakarta.annotation.Resource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @SpringBootApplication
 public class BrokerApplication {
     @Resource
-    private MessageRouterManage routerManage;
+    private MessageBrokerManage routerManage;
 
     public static void main(String[] args) {
         SpringApplication.run(BrokerApplication.class, args);
