@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: remote.host.com:8848
+#        group: chat
+#        namespace: dev
+#        file-extension: yaml
+#        shared-configs:
+#          - data-id: common.yaml
+#            group: chat
+#            refresh: true
+
+#logging:
+#  level:
+#    root: error

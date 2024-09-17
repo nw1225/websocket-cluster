@@ -1,6 +1,7 @@
 package com.nw.im.common.tcp;
 
 
+import com.nw.im.common.Message;
 import com.nw.im.common.MessageListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

@@ -11,6 +11,7 @@
         <module>im-common</module>
         <module>im-connect-starter</module>
         <module>im-broker-starter</module>
+        <module>im-push-starter</module>
     </modules>
 
     <properties>
