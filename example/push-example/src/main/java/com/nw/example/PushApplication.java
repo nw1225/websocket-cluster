@@ -30,9 +30,4 @@ public class PushApplication {
     public void test(@RequestParam String userId) throws ExecutionException, InterruptedException {
         messagePushService.send(new Message(userId, UUID.randomUUID().toString(), UUID.randomUUID().toString()));
     }
-
-//    @Bean
-//    public NewTopic topic() {
-//        return new NewTopic("push1", 1024, (short) 1);
-//    }
 }
