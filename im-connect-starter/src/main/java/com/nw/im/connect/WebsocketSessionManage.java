@@ -10,4 +10,6 @@ public interface WebsocketSessionManage {
     void sendMessage(String userId, String device, String message);
 
     void sendMessage(String userId, String message);
+
+    void heartbeat(WebSocketSession session,String userId, String device);
 }

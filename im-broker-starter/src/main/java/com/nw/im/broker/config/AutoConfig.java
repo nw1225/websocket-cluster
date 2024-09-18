@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 @RequiredArgsConstructor
 public class AutoConfig {
     private final WebsocketProperties websocketProperties;
-    private final RedisTemplate<String, ?> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @ConditionalOnClass(NacosServiceManager.class)
     @Bean

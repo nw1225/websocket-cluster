@@ -16,9 +16,9 @@ public class MessageConsumer {
 
     @KafkaListener(topics = "${websocket.cluster.topic}")
     public void listen(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        log.info("im message key:{} msg:{} partition:{}", record.key(), record.value(), record.partition());
+        log.debug("im message key:{} msg:{} partition:{}", record.key(), record.value(), record.partition());
         Message message = JSON.parseObject(record.value(), Message.class);
-        messageBrokerManage.send(message.getUserId(), message.getKey(), message.getMessage());
+        messageBrokerManage.send(message.getUserId(), message.getMessage());
         ack.acknowledge();
     }
 }

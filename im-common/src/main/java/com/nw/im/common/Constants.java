@@ -8,7 +8,7 @@ public interface Constants {
 
     String nodeId = UUID.randomUUID().toString();
 
-    String clientKeyPrefix = "websocket:client:";
+    String clientKeyPrefix = "websocket:client:{%s}:%s";
 
     String userId = "userId";
 

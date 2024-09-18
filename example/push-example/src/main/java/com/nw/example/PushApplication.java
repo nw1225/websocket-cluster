@@ -28,6 +28,6 @@ public class PushApplication {
 
     @GetMapping
     public void test(@RequestParam String userId) throws ExecutionException, InterruptedException {
-        messagePushService.send(new Message(userId, UUID.randomUUID().toString(), UUID.randomUUID().toString()));
+        messagePushService.send(new Message(userId, UUID.randomUUID().toString()));
     }
 }

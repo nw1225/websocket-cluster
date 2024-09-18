@@ -1,23 +1,30 @@
 package com.nw.im.connect;
 
 import com.nw.im.common.Constants;
+import io.netty.util.HashedWheelTimer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
 public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     private static final Map<String, ConcurrentHashMap<String, WebSocketSession>> sessionPool = new ConcurrentHashMap<>();
 
-    private final RedisTemplate<String, ?> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final HashedWheelTimer timer = new HashedWheelTimer(1, TimeUnit.SECONDS, 1024 * 1024);
+    private final static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(200, 200, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1), new ThreadPoolExecutor.CallerRunsPolicy());
 
 
     @Override
@@ -35,7 +42,7 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
             }
             deviceMap.put(device, session);
             //注册到redis
-            redisTemplate.opsForHash().put(Constants.clientKeyPrefix + userId, device, Constants.nodeId);
+            setRedisKey(userId, device);
             log.debug("建立与UserID：{},device：{}的连接", userId, device);
             return deviceMap;
         });
@@ -46,9 +53,26 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
         sessionPool.computeIfPresent(userId, (key, deviceMap) -> {
             deviceMap.remove(device);
             //从redis移除
-            redisTemplate.opsForHash().delete(Constants.clientKeyPrefix + userId, device);
+            String redisKey = String.format(Constants.clientKeyPrefix, userId, device);
+            redisTemplate.opsForValue().getAndDelete(redisKey);
             return deviceMap.isEmpty() ? null : deviceMap;
         });
+    }
+
+    @Override
+    public void heartbeat(WebSocketSession session, String userId, String device) {
+        threadPoolExecutor.execute(() -> {
+            timer.newTimeout((task) -> {
+                setRedisKey(userId, device);
+                session.sendMessage(new PingMessage());
+            }, 30, TimeUnit.SECONDS);
+        });
+    }
+
+
+    private void setRedisKey(String userId, String device) {
+        String redisKey = String.format(Constants.clientKeyPrefix, userId, device);
+        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 60, TimeUnit.SECONDS);
     }
 
     @Override

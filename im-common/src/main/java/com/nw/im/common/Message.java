@@ -7,7 +7,6 @@ import java.io.Serializable;
 @Data
 public class Message implements Serializable {
     private final String userId;
-    private final String key;
     private final String message;
 }
 

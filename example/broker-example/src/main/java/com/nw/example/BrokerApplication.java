@@ -24,6 +24,6 @@ public class BrokerApplication {
 
     @GetMapping
     public void test(@RequestParam String userId) {
-        routerManage.send(userId,UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        routerManage.send(userId, UUID.randomUUID().toString());
     }
 }
