@@ -16,7 +16,7 @@ public class MessagePushService {
     private final WebsocketProperties websocketProperties;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public <T> void send(Message message) throws ExecutionException, InterruptedException {
+    public void send(Message message) throws ExecutionException, InterruptedException {
         kafkaTemplate.send(websocketProperties.getTopic(), message.getUserId(), JSON.toJSONString(message)).get();
     }
 }

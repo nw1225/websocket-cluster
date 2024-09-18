@@ -40,4 +40,16 @@ public class RedisMessageBrokerManage implements MessageBrokerManage {
             channel.writeAndFlush(new Message(userId, message));
         }
     }
+
+    @Override
+    public void send(String userId, String device, String message) {
+        String key = String.format(Constants.clientKeyPrefix, userId, device);
+        String nodeId = redisTemplate.opsForValue().get(key);
+        log.debug("userId:{} node:{}", userId, nodeId);
+        Channel channel = tcpChannelManager.getChannel(nodeId);
+        if (Objects.isNull(channel)) {
+            return;
+        }
+        channel.writeAndFlush(new Message(userId, message).setDevice(device));
+    }
 }
