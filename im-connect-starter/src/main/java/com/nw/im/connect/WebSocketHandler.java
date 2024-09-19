@@ -3,6 +3,7 @@ package com.nw.im.connect;
 import com.nw.im.common.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -43,7 +44,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @param session WebSocket会话
      */
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) {
         // 获取用户ID和设备信息，将会话信息存入管理器，并启动心跳
         String userId = getUserId(session);
         String device = getDevice(session);
@@ -58,7 +59,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @param status  连接关闭状态
      */
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
         connectionClose(session);
     }
 
@@ -69,7 +70,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @param exception 异常
      */
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) {
+    public void handleTransportError(@NonNull WebSocketSession session, @NonNull Throwable exception) {
         connectionClose(session);
     }
 
@@ -93,7 +94,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @param message Pong消息
      */
     @Override
-    protected void handlePongMessage(WebSocketSession session, PongMessage message) {
+    protected void handlePongMessage(@NonNull WebSocketSession session, @NonNull PongMessage message) {
         heartbeat(session);
     }
 

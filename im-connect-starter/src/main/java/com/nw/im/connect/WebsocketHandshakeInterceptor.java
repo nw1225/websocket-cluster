@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
@@ -32,7 +33,7 @@ public class WebsocketHandshakeInterceptor implements HandshakeInterceptor {
      * @return whether to proceed with the handshake
      */
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+    public boolean beforeHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response, @NonNull WebSocketHandler wsHandler, @NonNull Map<String, Object> attributes) {
         // 获取授权令牌名称
         String authorizationTokenName = websocketProperties.getAuthorizationTokenName();
         // 转换请求为ServletServerHttpRequest类型，以便获取请求参数和头信息
@@ -63,7 +64,7 @@ public class WebsocketHandshakeInterceptor implements HandshakeInterceptor {
      * @param exception the exception that led to the completion of the handshake
      */
     @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+    public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response, @NonNull WebSocketHandler wsHandler, Exception exception) {
         // 记录连接成功日志
         log.debug("connect success");
     }
