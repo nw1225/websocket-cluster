@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.nw</groupId>
-    <artifactId>im</artifactId>
+    <artifactId>websocket-cluster</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>im-common</module>
-        <module>im-connect-starter</module>
-        <module>im-broker-starter</module>
-        <module>im-push-starter</module>
+        <module>websocket-cluster-common</module>
+        <module>websocket-cluster-connect-starter</module>
+        <module>websocket-cluster-broker-starter</module>
+        <module>websocket-cluster-push-starter</module>
     </modules>
 
     <properties>

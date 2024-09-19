@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <artifactId>im-broker-starter</artifactId>
+            <artifactId>websocket-cluster-broker-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <groupId>com.nw</groupId>
         </dependency>

@@ -1,6 +1,6 @@
 package com.nw.example;
 
-import com.nw.im.broker.MessageBrokerManage;
+import com.nw.websocket.broker.MessageBrokerManage;
 import jakarta.annotation.Resource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

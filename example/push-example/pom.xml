@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <artifactId>im-push-starter</artifactId>
+            <artifactId>websocket-cluster-push-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <groupId>com.nw</groupId>
         </dependency>

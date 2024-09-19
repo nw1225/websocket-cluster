@@ -19,7 +19,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <artifactId>im-connect-starter</artifactId>
+            <artifactId>websocket-cluster-connect-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <groupId>com.nw</groupId>
         </dependency>

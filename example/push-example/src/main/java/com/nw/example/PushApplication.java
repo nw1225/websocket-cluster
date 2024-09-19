@@ -1,12 +1,10 @@
 package com.nw.example;
 
-import com.nw.im.common.Message;
-import com.nw.im.push.MessagePushService;
+import com.nw.websocket.common.Message;
+import com.nw.websocket.push.MessagePushService;
 import jakarta.annotation.Resource;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

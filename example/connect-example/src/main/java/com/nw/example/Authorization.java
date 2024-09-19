@@ -1,7 +1,7 @@
 package com.nw.example;
 
-import com.nw.im.connect.CertificationDetails;
-import com.nw.im.connect.WebsocketAuthorization;
+import com.nw.websocket.connect.CertificationDetails;
+import com.nw.websocket.connect.WebsocketAuthorization;
 import org.springframework.stereotype.Component;
 
 
