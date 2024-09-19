@@ -1,6 +1,6 @@
 #### 介绍
 
-websocket-cluster是一个基于springboot开发的websocket的分布式消息推送框架。
+websocket-cluster是一个基于springboot开发的websocket的分布式消息推送框架。支持websocket认证、集群部署。
 
 #### 软件架构
 
