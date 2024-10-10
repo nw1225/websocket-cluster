@@ -14,8 +14,10 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TCP客户端实现，使用Netty进行网络通信
@@ -51,11 +53,21 @@ public class TcpNettyClient {
     }
 
     public void connect(String host, Integer port, String nodeId) {
-        bootstrap.connect(host, port).addListener((ChannelFutureListener) future -> {
+        this.connect(InetSocketAddress.createUnresolved(host, port), nodeId, new AtomicInteger(0), 2);
+    }
+
+    private void connect(InetSocketAddress address, String nodeId, AtomicInteger retryCount, long delay) {
+        bootstrap.connect(address).addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
                 channelManager.addChannel(future.channel(), nodeId);
             } else {
-                future.channel().eventLoop().schedule(() -> connect(host, port, nodeId), 2, TimeUnit.SECONDS);
+                future.channel().eventLoop().schedule(() -> {
+                    int count = retryCount.incrementAndGet();
+                    if (count >= 3) {
+                        return;
+                    }
+                    connect(address, nodeId, retryCount, delay * 2);
+                }, delay, TimeUnit.SECONDS);
             }
         }).awaitUninterruptibly(5, TimeUnit.SECONDS); // 增加超时时间
     }
