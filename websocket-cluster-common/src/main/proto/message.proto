@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.nw.websocket.common";
+option java_outer_classname = "MessageServiceProto";
+
+service MessageService {
+  rpc push(stream Message) returns (Message);
+}
+
+message Response {}
+
+message Message {
+  string userId = 1;
+  string message = 2;
+  string device = 3;
+}
