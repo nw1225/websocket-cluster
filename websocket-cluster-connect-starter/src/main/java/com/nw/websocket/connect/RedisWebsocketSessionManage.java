@@ -5,7 +5,6 @@ import io.netty.util.HashedWheelTimer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -88,9 +87,13 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     @Override
     public void heartbeat(WebSocketSession session, String userId, String device) {
         threadPoolExecutor.execute(() -> timer.newTimeout((task) -> {
-            setRedisKey(userId, device);
-            session.sendMessage(new PingMessage());
-        }, 30, TimeUnit.SECONDS));
+            try {
+                session.sendMessage(new TextMessage("heartbeat"));
+                setRedisKey(userId, device);
+            } catch (Exception e) {
+                delete(userId,device);
+            }
+        }, 120, TimeUnit.SECONDS));
     }
 
     /**
@@ -101,7 +104,7 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
      */
     private void setRedisKey(String userId, String device) {
         String redisKey = String.format(Constants.clientKeyPrefix, userId, device);
-        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 60, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 180, TimeUnit.SECONDS);
     }
 
     /**

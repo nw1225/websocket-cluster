@@ -14,8 +14,4 @@ spring:
   application:
     name: connect
 websocket:
-#  cluster:
-#    port: 8189
-#server:
-#  port: 8081
   authorization-token-name: token
