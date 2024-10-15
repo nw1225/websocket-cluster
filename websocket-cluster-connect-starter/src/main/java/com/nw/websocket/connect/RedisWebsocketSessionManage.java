@@ -93,7 +93,7 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
             } catch (Exception e) {
                 delete(userId,device);
             }
-        }, 120, TimeUnit.SECONDS));
+        }, 60, TimeUnit.SECONDS));
     }
 
     /**
@@ -104,7 +104,7 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
      */
     private void setRedisKey(String userId, String device) {
         String redisKey = String.format(Constants.clientKeyPrefix, userId, device);
-        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 180, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 120, TimeUnit.SECONDS);
     }
 
     /**
