@@ -77,7 +77,6 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
             redisTemplate.opsForValue().getAndDelete(redisKey);
             return deviceMap.isEmpty() ? null : deviceMap;
         });
-        cancelTimeout(session);
     }
 
     /**
