@@ -12,6 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -132,19 +133,17 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     @Override
     public void sendMessage(String userId, String device, String message) {
         Map<String, WebSocketSession> deviceMap = sessionPool.get(userId);
-        // 使用使用 Optional.ofNullable(deviceMap).ifPresent()会不会更优雅点?,减少if
-        if (Objects.nonNull(deviceMap)) {
-            WebSocketSession session = deviceMap.get(device);
-            if (Objects.nonNull(session)) {
+        Optional.ofNullable(deviceMap).ifPresent(map -> {
+            Optional.ofNullable(map.get(device)).ifPresent(session->{
                 try {
                     session.sendMessage(new TextMessage(message));
                 } catch (IOException e) {
                     log.warn("消息推送失败：{} {}", userId, device, e);
                 }
-            }
-        }
-    }
+            });
+    });
 
+    }
     /**
      * 向指定用户的所有设备发送消息
      *
@@ -154,16 +153,17 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     @Override
     public void sendMessage(String userId, String message) {
         Map<String, WebSocketSession> deviceMap = sessionPool.get(userId);
-        if (Objects.nonNull(deviceMap)) {
-            deviceMap.forEach((key, session) -> {
-                if (Objects.nonNull(session)) {
+        Optional.ofNullable(deviceMap).ifPresent(map -> {
+            deviceMap.forEach((key, value) -> {
+                Optional.ofNullable(map.get(value)).ifPresent(session -> {
                     try {
                         session.sendMessage(new TextMessage(message));
                     } catch (IOException e) {
                         log.warn("消息推送失败：{} {}", userId, key, e);
                     }
-                }
+                });
             });
-        }
+
+        });
     }
 }
