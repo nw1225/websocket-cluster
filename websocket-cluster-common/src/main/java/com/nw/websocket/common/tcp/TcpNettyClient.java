@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TCP客户端实现，使用Netty进行网络通信
+ * 是否考虑每个函数和变量上加上完整注释,方便阅读?
  */
 public class TcpNettyClient {
     private final NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
@@ -31,6 +32,7 @@ public class TcpNettyClient {
         this.channelManager = channelManager;
         init();
     }
+
 
     private void init() {
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)

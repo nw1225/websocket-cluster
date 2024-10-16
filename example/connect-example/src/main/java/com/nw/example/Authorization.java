@@ -1,5 +1,6 @@
 package com.nw.example;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.nw.websocket.connect.CertificationDetails;
 import com.nw.websocket.connect.WebsocketAuthorization;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,7 @@ public class Authorization implements WebsocketAuthorization {
     @Override
     public CertificationDetails verify(String token) {
         //可以在此处进行权限验证，当用户权限验证通过后，进行握手成功操作，验证失败返回false
-        if (token.equals("123")) {
+        if (StringUtils.equals(token,"123")) {
             return null;
         }
         return CertificationDetails.builder().userId(token).build();

@@ -114,6 +114,7 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     @Override
     public void sendMessage(String userId, String device, String message) {
         Map<String, WebSocketSession> deviceMap = sessionPool.get(userId);
+        // 使用使用 Optional.ofNullable(deviceMap).ifPresent()会不会更优雅点?,减少if
         if (Objects.nonNull(deviceMap)) {
             WebSocketSession session = deviceMap.get(device);
             if (Objects.nonNull(session)) {
