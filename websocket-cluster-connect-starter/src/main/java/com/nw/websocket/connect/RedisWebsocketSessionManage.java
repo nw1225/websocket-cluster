@@ -2,19 +2,17 @@ package com.nw.websocket.connect;
 
 import com.nw.websocket.common.Constants;
 import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,12 +23,14 @@ import java.util.concurrent.TimeUnit;
 public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     // 会话池，用于存储所有用户的WebSocket会话
     private static final Map<String, ConcurrentHashMap<String, WebSocketSession>> sessionPool = new ConcurrentHashMap<>();
+    private static final Map<WebSocketSession, Timeout> sessionTimeoutPool = new ConcurrentHashMap<>();
 
-    private final RedisTemplate<String, String> redisTemplate;
-    // 线程池，用于处理异步任务
-    private final static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(200, 200, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1), new ThreadPoolExecutor.CallerRunsPolicy());
     // 定时任务定时器，用于处理心跳等定时任务
     private final HashedWheelTimer timer = new HashedWheelTimer(1, TimeUnit.SECONDS, 1024 * 1024);
+
+
+    private final RedisTemplate<String, String> redisTemplate;
+
 
     /**
      * 将WebSocket会话添加到会话池
@@ -64,11 +64,12 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
     /**
      * 从会话池中删除指定用户的WebSocket会话
      *
-     * @param userId 用户ID
-     * @param device 设备标识
+     * @param session
+     * @param userId  用户ID
+     * @param device  设备标识
      */
     @Override
-    public void delete(String userId, String device) {
+    public void delete(WebSocketSession session, String userId, String device) {
         sessionPool.computeIfPresent(userId, (key, deviceMap) -> {
             deviceMap.remove(device);
             //从redis移除
@@ -87,10 +88,27 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
      */
     @Override
     public void heartbeat(WebSocketSession session, String userId, String device) {
-        threadPoolExecutor.execute(() -> timer.newTimeout((task) -> {
-            setRedisKey(userId, device);
-            session.sendMessage(new PingMessage());
-        }, 30, TimeUnit.SECONDS));
+        setRedisKey(userId, device);
+        cancelTimeout(session);
+        Timeout timeout = newTimeoutTask(session, userId, device);
+        sessionTimeoutPool.put(session, timeout);
+    }
+
+    private void cancelTimeout(WebSocketSession session) {
+        Timeout oldTimout = sessionTimeoutPool.remove(session);
+        if (Objects.nonNull(oldTimout) && !oldTimout.isCancelled()) {
+            oldTimout.cancel();
+        }
+    }
+
+    private Timeout newTimeoutTask(WebSocketSession session, String userId, String device) {
+        return timer.newTimeout((task) -> {
+            try {
+                session.close();
+            } finally {
+                delete(session, userId, device);
+            }
+        }, 90, TimeUnit.SECONDS);
     }
 
     /**
@@ -101,7 +119,7 @@ public class RedisWebsocketSessionManage implements WebsocketSessionManage {
      */
     private void setRedisKey(String userId, String device) {
         String redisKey = String.format(Constants.clientKeyPrefix, userId, device);
-        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 60, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(redisKey, Constants.nodeId, 120, TimeUnit.SECONDS);
     }
 
     /**
