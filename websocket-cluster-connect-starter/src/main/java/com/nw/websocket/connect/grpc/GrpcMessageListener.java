@@ -1,4 +1,4 @@
-package com.nw.websocket.connect.tcp;
+package com.nw.websocket.connect.grpc;
 
 import com.nw.websocket.common.Message;
 import com.nw.websocket.common.MessageListener;
@@ -8,12 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 /**
- * TCP消息监听器类，实现了MessageListener接口
- * 该类用于处理TCP渠道接收到的消息，并通过Websocket进行转发
+ * grpc消息监听器类，实现了MessageListener接口
+ * 该类用于处理grpc渠道接收到的消息，并通过Websocket进行转发
  */
 @Slf4j
 @RequiredArgsConstructor
-public class TcpMessageListener implements MessageListener {
+public class GrpcMessageListener implements MessageListener {
     // Websocket会话管理器，用于发送消息到Websocket客户端
     private final WebsocketSessionManage websocketSessionManage;
 

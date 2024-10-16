@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.PongMessage;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -83,19 +83,17 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 获取用户ID和设备信息，从会话管理器中删除对应会话
         String userId = getUserId(session);
         String device = getDevice(session);
-        websocketSessionManage.delete(userId, device);
+        websocketSessionManage.delete(session,userId, device);
         log.debug("关闭与UserID：{},device：{}的连接", userId, device);
     }
 
-    /**
-     * 处理Pong消息，接收到Pong消息后重新启动心跳
-     *
-     * @param session WebSocket会话
-     * @param message Pong消息
-     */
     @Override
-    protected void handlePongMessage(@NonNull WebSocketSession session, @NonNull PongMessage message) {
-        heartbeat(session);
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
+        String text = message.getPayload();
+        if ("heartbeat".equalsIgnoreCase(text)) {
+            heartbeat(session);
+            session.sendMessage(new TextMessage("heartbeat"));
+        }
     }
 
     /**

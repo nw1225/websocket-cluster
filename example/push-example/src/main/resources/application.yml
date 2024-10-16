@@ -14,7 +14,7 @@ spring:
 
 websocket:
   cluster:
-    topic: push1
+    topic: push
 
 server:
   port: 8082

@@ -4,10 +4,10 @@ import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.nw.websocket.broker.MessageBrokerManage;
 import com.nw.websocket.broker.RedisMessageBrokerManage;
-import com.nw.websocket.broker.tcp.NacosNodeSubscriber;
-import com.nw.websocket.broker.tcp.TcpChannelManager;
+import com.nw.websocket.broker.grpc.GrpcChannelManager;
+import com.nw.websocket.broker.grpc.NacosNodeSubscriber;
 import com.nw.websocket.common.ChannelManager;
-import com.nw.websocket.common.tcp.TcpNettyClient;
+import com.nw.websocket.common.grpc.GrpcConnectClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
@@ -27,44 +27,44 @@ public class AutoConfig {
      * 配置Nacos节点订阅者
      *
      * @param nacosServiceManager Nacos服务管理器
-     * @param tcpNettyClient      TCP Netty客户端
+     * @param GrpcConnectClient   grpc连接客户端
      * @return Nacos节点订阅者实例
      */
     @ConditionalOnClass(NacosServiceManager.class)
     @Bean
-    public EventListener nacosNodeSubscriber(NacosServiceManager nacosServiceManager, TcpNettyClient tcpNettyClient) {
-        return new NacosNodeSubscriber(nacosServiceManager, tcpNettyClient, websocketProperties);
+    public EventListener nacosNodeSubscriber(NacosServiceManager nacosServiceManager, GrpcConnectClient GrpcConnectClient) {
+        return new NacosNodeSubscriber(nacosServiceManager, GrpcConnectClient, websocketProperties);
     }
 
     /**
-     * 配置TCP通道管理器
+     * 配置grpc通道管理器
      *
-     * @return TCP通道管理器实例
+     * @return grpc通道管理器实例
      */
     @Bean
-    public TcpChannelManager tcpChannelManager() {
-        return new TcpChannelManager();
+    public GrpcChannelManager grpcChannelManager() {
+        return new GrpcChannelManager();
     }
 
     /**
-     * 配置TCP Netty客户端
+     * 配置grpc 客户端
      *
      * @param channelManager 通道管理器
-     * @return TCP Netty客户端实例
+     * @return grpc 客户端实例
      */
     @Bean
-    public TcpNettyClient tcpNettyClient(ChannelManager channelManager) {
-        return new TcpNettyClient(channelManager);
+    public GrpcConnectClient grpcConnectClient(ChannelManager channelManager) {
+        return new GrpcConnectClient(channelManager);
     }
 
     /**
      * 配置消息路由管理器
      *
-     * @param tcpChannelManager TCP通道管理器
+     * @param grpcChannelManager grpc通道管理器
      * @return 消息路由管理器实例
      */
     @Bean
-    public MessageBrokerManage messageRouterManage(TcpChannelManager tcpChannelManager) {
-        return new RedisMessageBrokerManage(redisTemplate, tcpChannelManager);
+    public MessageBrokerManage messageRouterManage(GrpcChannelManager grpcChannelManager) {
+        return new RedisMessageBrokerManage(redisTemplate, grpcChannelManager);
     }
 }
