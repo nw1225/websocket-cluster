@@ -1,8 +1,7 @@
-package com.nw.websocket.broker.tcp;
+package com.nw.websocket.broker.grpc;
 
 import com.nw.websocket.common.ChannelManager;
-import io.netty.channel.Channel;
-import io.netty.util.AttributeKey;
+import io.grpc.ManagedChannel;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -12,16 +11,17 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 基于TCP协议的通道管理器实现类
+ * 基于grpc协议的通道管理器实现类
  * 负责管理客户端与服务器之间的连接通道
  */
 @Slf4j
-public class TcpChannelManager implements ChannelManager {
+public class GrpcChannelManager implements ChannelManager {
     // 存储客户端连接通道的映射
-    private final Map<String, Channel> channelMap = new ConcurrentHashMap<>();
+    private final Map<String, ManagedChannel> channelMap = new ConcurrentHashMap<>();
     // 用于标识客户端的属性键
-    private final AttributeKey<String> clientKey = AttributeKey.newInstance("nodeClient");
-    // 锁，用于同步访问channelMap
+    private final Map<ManagedChannel, String> channelKeyMap = new ConcurrentHashMap<>();
+
+    // 锁，用于同步访问channel
     private final Lock lock = new ReentrantLock();
 
     /**
@@ -32,16 +32,17 @@ public class TcpChannelManager implements ChannelManager {
      * @param client  客户端标识
      */
     @Override
-    public void addChannel(Channel channel, String client) {
+    public void addChannel(ManagedChannel channel, String client) {
         lock.lock();
         try {
             if (this.online(client)) {
                 log.debug("{} 重复连接", client);
-                channel.close();
+                channel.shutdown();
                 return;
             }
             channelMap.put(client, channel);
-            channel.attr(clientKey).set(client);
+            channelKeyMap.put(channel, client);
+
             log.debug("{} 连接", client);
         } finally {
             lock.unlock();
@@ -55,13 +56,21 @@ public class TcpChannelManager implements ChannelManager {
      * @param channel 客户端连接通道
      */
     @Override
-    public void removeChannel(Channel channel) {
-        Object client = this.getClient(channel);
-        if (Objects.isNull(client)) {
-            return;
+    public void removeChannel(ManagedChannel channel) {
+        lock.lock();
+        try {
+            Object client = this.getClient(channel);
+            if (Objects.isNull(client)) {
+                return;
+            }
+            channelMap.remove(client);
+            channelKeyMap.remove(channel);
+
+            log.debug("{} 移除连接", client);
+
+        } finally {
+            lock.unlock();
         }
-        channelMap.remove(client);
-        log.debug("{} 移除连接", client);
     }
 
     /**
@@ -72,11 +81,11 @@ public class TcpChannelManager implements ChannelManager {
      * @return 客户端标识或null
      */
     @Override
-    public String getClient(Channel channel) {
+    public String getClient(ManagedChannel channel) {
         if (Objects.isNull(channel)) {
             return null;
         }
-        return channel.attr(clientKey).get();
+        return channelKeyMap.get(channel);
     }
 
     /**
@@ -86,7 +95,7 @@ public class TcpChannelManager implements ChannelManager {
      * @return 连接通道或null
      */
     @Override
-    public Channel getChannel(String client) {
+    public ManagedChannel getChannel(String client) {
         return channelMap.get(client);
     }
 
@@ -99,6 +108,6 @@ public class TcpChannelManager implements ChannelManager {
      */
     @Override
     public Boolean online(String client) {
-        return this.channelMap.containsKey(client) && this.channelMap.get(client) != null;
+        return this.channelMap.containsKey(client);
     }
 }

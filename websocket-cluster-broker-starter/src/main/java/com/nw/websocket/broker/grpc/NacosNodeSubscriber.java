@@ -1,4 +1,4 @@
-package com.nw.websocket.broker.tcp;
+package com.nw.websocket.broker.grpc;
 
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -9,9 +9,8 @@ import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.nw.websocket.broker.config.WebsocketProperties;
 import com.nw.websocket.common.Constants;
-import com.nw.websocket.common.tcp.TcpNettyClient;
+import com.nw.websocket.common.grpc.GrpcConnectClient;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -24,15 +23,15 @@ import java.util.stream.Collectors;
 
 /**
  * Nacos节点订阅者
- * 用于监听Nacos服务实例的上下线事件，并相应地建立或关闭与这些实例的TCP连接
+ * 用于监听Nacos服务实例的上下线事件，并相应地建立或关闭与这些实例的grpc连接
  */
 @Slf4j
 @RequiredArgsConstructor
 public class NacosNodeSubscriber implements EventListener {
     // Nacos服务管理器，用于与Nacos服务进行交互
     private final NacosServiceManager nacosServiceManager;
-    // TCP客户端，用于建立和管理TCP连接
-    private final TcpNettyClient tcpNettyClient;
+    // grpc客户端，用于建立和管理grpc连接
+    private final GrpcConnectClient grpcConnectClient;
     // Websocket属性，包含服务名等配置
     private final WebsocketProperties websocketProperties;
     // 实例缓存，键为节点ID，值为实例详情
@@ -70,7 +69,7 @@ public class NacosNodeSubscriber implements EventListener {
         Set<String> nodeIds = list.stream().map(i -> i.getMetadata().get(Constants.NODE_ID)).collect(Collectors.toSet());
         Set<String> offlineNodeIds = instances.keySet().stream().filter(k -> !nodeIds.contains(k)).collect(Collectors.toSet());
         offlineNodeIds.forEach(nodeId -> {
-            tcpNettyClient.closeConnect(nodeId);
+            grpcConnectClient.closeConnect(nodeId);
             instances.remove(nodeId);
             log.debug("{}下线", nodeId);
         });
@@ -78,7 +77,7 @@ public class NacosNodeSubscriber implements EventListener {
 
     /**
      * 处理实例上线逻辑
-     * 对于新出现的实例，尝试与其建立TCP连接，并将其信息加入缓存
+     * 对于新出现的实例，尝试与其建立grpc连接，并将其信息加入缓存
      *
      * @param list 新发现的实例列表
      */
@@ -87,7 +86,7 @@ public class NacosNodeSubscriber implements EventListener {
             Map<String, String> metadata = i.getMetadata();
             String nodeId = metadata.get(Constants.NODE_ID);
             instances.computeIfAbsent(nodeId, (key) -> {
-                tcpNettyClient.connect(i.getIp(), Integer.parseInt(metadata.get(Constants.NODE_PORT)), nodeId);
+                grpcConnectClient.connect(i.getIp(), Integer.parseInt(metadata.get(Constants.NODE_PORT)), nodeId);
                 log.debug("{}上线", nodeId);
                 return i;
             });
@@ -104,14 +103,5 @@ public class NacosNodeSubscriber implements EventListener {
     public void registerSubscriber() throws NacosException {
         NamingService namingService = nacosServiceManager.getNamingService();
         namingService.subscribe(websocketProperties.getConnectServiceName(), this);
-    }
-
-    /**
-     * 销毁资源
-     * 关闭所有的TCP连接
-     */
-    @PreDestroy
-    public void destroy() {
-        tcpNettyClient.destroy();
     }
 }

@@ -19,10 +19,11 @@ public interface WebsocketSessionManage {
     /**
      * 删除指定用户的设备会话
      *
-     * @param userId 用户ID
-     * @param device 设备标识
+     * @param session
+     * @param userId  用户ID
+     * @param device  设备标识
      */
-    void delete(String userId, String device);
+    void delete(WebSocketSession session, String userId, String device);
 
     /**
      * 向指定用户的设备发送消息
