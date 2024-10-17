@@ -14,4 +14,8 @@ public class WebsocketClusterProperties {
      * 定义集群通信的端口号，默认为8188
      */
     private Integer port = 8188;
+
+    private String pingText = "ping";
+
+    private String pongText = "pong";
 }

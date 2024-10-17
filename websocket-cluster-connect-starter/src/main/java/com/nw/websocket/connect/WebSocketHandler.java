@@ -1,6 +1,7 @@
 package com.nw.websocket.connect;
 
 import com.nw.websocket.common.Constants;
+import com.nw.websocket.connect.config.WebsocketClusterProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
@@ -17,6 +18,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class WebSocketHandler extends TextWebSocketHandler {
     // 注入WebSocket会话管理器，用于管理WebSocket会话
     private final WebsocketSessionManage websocketSessionManage;
+    private final WebsocketClusterProperties websocketClusterProperties;
 
     /**
      * 从WebSocket会话中提取用户ID
@@ -83,16 +85,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 获取用户ID和设备信息，从会话管理器中删除对应会话
         String userId = getUserId(session);
         String device = getDevice(session);
-        websocketSessionManage.delete(session,userId, device);
+        websocketSessionManage.delete(session, userId, device);
         log.debug("关闭与UserID：{},device：{}的连接", userId, device);
     }
 
     @Override
     protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
         String text = message.getPayload();
-        if ("heartbeat".equalsIgnoreCase(text)) {
+        String pingText = websocketClusterProperties.getPingText();
+        if (pingText.equalsIgnoreCase(text)) {
             heartbeat(session);
-            session.sendMessage(new TextMessage("heartbeat"));
+            String pongText = websocketClusterProperties.getPongText();
+            session.sendMessage(new TextMessage(pongText));
         }
     }
 
