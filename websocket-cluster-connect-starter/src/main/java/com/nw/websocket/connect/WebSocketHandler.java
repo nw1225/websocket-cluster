@@ -85,7 +85,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 获取用户ID和设备信息，从会话管理器中删除对应会话
         String userId = getUserId(session);
         String device = getDevice(session);
-        websocketSessionManage.delete(session, userId, device);
+        websocketSessionManage.delete(userId, device);
         log.debug("关闭与UserID：{},device：{}的连接", userId, device);
     }
 
@@ -109,6 +109,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 获取用户ID和设备信息，更新会话的心跳时间
         String userId = getUserId(session);
         String device = getDevice(session);
-        websocketSessionManage.heartbeat(session, userId, device);
+        websocketSessionManage.heartbeat(userId, device);
     }
 }

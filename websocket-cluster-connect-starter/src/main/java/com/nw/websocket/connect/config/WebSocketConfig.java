@@ -3,10 +3,12 @@ package com.nw.websocket.connect.config;
 import com.nw.websocket.connect.WebSocketHandler;
 import com.nw.websocket.connect.WebsocketProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
 // 配置WebSocket的类
 @RequiredArgsConstructor
@@ -31,5 +33,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(webSocketHandler, websocketProperties.getPath())
                 .setAllowedOrigins("*")
                 .addInterceptors(handshakeInterceptor);
+    }
+
+
+    @Bean
+    public ServletServerContainerFactoryBean createWebSocketContainer() {
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        container.setMaxSessionIdleTimeout(websocketProperties.getMaxSessionIdleTimeout() * 1000L);
+        return container;
     }
 }

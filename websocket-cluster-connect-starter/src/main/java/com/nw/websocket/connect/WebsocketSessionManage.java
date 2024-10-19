@@ -19,11 +19,10 @@ public interface WebsocketSessionManage {
     /**
      * 删除指定用户的设备会话
      *
-     * @param session
      * @param userId  用户ID
      * @param device  设备标识
      */
-    void delete(WebSocketSession session, String userId, String device);
+    void delete(String userId, String device);
 
     /**
      * 向指定用户的设备发送消息
@@ -45,9 +44,8 @@ public interface WebsocketSessionManage {
     /**
      * 更新特定用户的设备会话的心跳时间，以保持会话活跃
      *
-     * @param session Websocket会话对象
      * @param userId 用户ID
      * @param device 设备标识
      */
-    void heartbeat(WebSocketSession session,String userId, String device);
+    void heartbeat(String userId, String device);
 }

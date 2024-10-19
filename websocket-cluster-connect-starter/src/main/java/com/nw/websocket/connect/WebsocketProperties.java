@@ -19,4 +19,9 @@ public class WebsocketProperties {
      * 定义WebSocket的路径，默认为"/ws"
      */
     private String path = "/ws";
+
+    /**
+     * 最大空闲时间，默认120s
+     */
+    private Long maxSessionIdleTimeout = 120L;
 }
